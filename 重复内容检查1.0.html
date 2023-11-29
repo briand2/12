@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>重复文字检测</title>
+  <style>
+    .highlight {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="input-text" rows="5" cols="50"></textarea>
+  <button onclick="checkDuplicates()">检查重复文字</button>
+  <p id="output-paragraph"></p>
+
+  <script>
+    function checkDuplicates() {
+      // 获取输入的文字
+      var inputText = document.getElementById("input-text").value;
+
+      // 将文字按换行符分割成每行文本
+      var lines = inputText.split("\n");
+
+      // 创建一个对象来存储重复的词语
+      var duplicates = {};
+
+      // 遍历每行文本
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        // 将每行文本按空格和标点符号分割成词语
+        var words = line.split(/[\s，。！？、；：“”‘’【】（）《》<>]/);
+
+        // 遍历词语数组
+        for (var j = 0; j < words.length; j++) {
+          var word = words[j];
+
+          // 剔除数字
+          if (!isNumeric(word)) {
+            // 检查词语是否已经存在于重复对象中
+            if (duplicates[word] === undefined) {
+              duplicates[word] = 1;
+            } else {
+              duplicates[word]++;
+            }
+          }
+        }
+      }
+
+      // 创建一个新的段落元素用于输出结果
+      var outputParagraph = document.getElementById("output-paragraph");
+      outputParagraph.innerHTML = "";
+
+      // 遍历每行文本
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        // 将每行文本按空格和标点符号分割成词语
+        var words = line.split(/[\s，。！？、；：“”‘’【】（）《》<>]/);
+
+        // 遍历原始的词语数组
+        for (var j = 0; j < words.length; j++) {
+          var word = words[j];
+
+          // 检查词语是否为重复词语，并且未被标记为红色
+          if (duplicates[word] > 1 && !outputParagraph.innerHTML.includes('<span class="highlight">' + word + '</span>')) {
+            // 创建一个带有高亮样式的 span 来标记重复词语
+            var span = document.createElement("span");
+            span.classList.add("highlight");
+            span.textContent = word;
+
+            // 将带有高亮样式的 span 添加到输出段落中
+            outputParagraph.appendChild(span);
+            outputParagraph.appendChild(document.createTextNode(" "));
+          } else {
+            // 创建一个普通的文本节点来显示非重复词语
+            var textNode = document.createTextNode(word + " ");
+            outputParagraph.appendChild(textNode);
+          }
+        }
+
+        // 添加换行符
+        outputParagraph.appendChild(document.createElement("br"));
+      }
+    }
+
+    // 检查是否为数字
+    function isNumeric(str) {
+      return /^\d+$/.test(str);
+    }
+  </script>
+</body>
+</html>
